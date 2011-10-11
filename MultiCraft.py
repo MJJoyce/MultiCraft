@@ -13,6 +13,8 @@ import sys
 import subprocess
 import getpass
 
+defaultDirectory = ""
+saveDirectory = ""
 
 ###############################################################################
 def defaultInstallDir():
@@ -45,7 +47,7 @@ def writeCfg(default, save):
 		else:
 			print "Error generating config file"
 	else:
-		print "Currently not supportin your OS...Sorry"
+		print "Currently not supporting your OS...Sorry"
 
 
 ###############################################################################
@@ -77,9 +79,81 @@ def initRun():
 
 
 ###############################################################################
+def clearScreen():
+	'''Helper for clearing the terminal'''
+	if (os.name == 'nt'):
+		os.system('cls')
+	else:
+		os.system('clear')
+
+
+
+###############################################################################
+def setup():
+	'''Gets config information for normal MultiCraft run'''
+	with open('cfg') as config:
+		for line in config:
+			temp = line.split()
+
+			if (temp[0] == "default"):
+				defaultDirectory = temp[1]
+			elif (temp[0] == "save"):
+				saveDirectory = temp[1]
+			else:
+				 print "Error processing config file"
+				 sys.exit(1)
+
+
+###############################################################################
+def play():
+	'''Lets the user select which version of MineCraft they want to run'''
+	clearScreen()
+	for item in os.listdir(directorySettings[1][0])
+
+
+###############################################################################
+def add():
+	''''''
+	pass
+
+
+###############################################################################
+def remove():
+	''''''
+	pass
+
+
+###############################################################################
+def revertDefault():
+	''''''
+	pass
+
+
+###############################################################################
 def menu():
 	'''MultiCraft's main menu'''
-	pass
+	while(1):
+		clearScreen()
+		print "---MultiCraft---"
+		print "1: Play"
+		print "2: Add Version"
+		print "3: Remove Version"
+		print "4: Reset Default Install"
+		print "5: Exit"
+		selection = raw_input("-->");
+
+		if (selection == '1'):
+			play()
+		elif (selection == '2'):
+			add()
+		elif (selection == '3'):
+			remove()
+		elif (selectin == '4'):
+			revertDefault()
+		elif (selection == '5'):
+			sys.exit(0)
+		else:
+			continue
 
 
 ###############################################################################
@@ -88,4 +162,5 @@ def menu():
 if (not os.path.isfile('cfg')):
 	initRun()
 else:
+	setup()
 	menu()
