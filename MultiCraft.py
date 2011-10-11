@@ -28,11 +28,24 @@ def defaultInstallDir():
 
 ###############################################################################
 def winToUnx(winPath):
+	'''Helper used to convert Windows paths to Unix paths
+
+	   Makes dealing with paths easier in the code.
+	'''
 	temp = list(winPath)
 	replace = [count for count, char in enumerate(temp) if char == '\\']
 	for index in replace:
 		temp[index] = '/'
 	return ''.join(temp)
+
+
+###############################################################################
+def getPathSlash():
+	'''Returns the slash used in paths for the current OS'''
+	if (os.name == "nt"):
+		return '\\'
+	else:
+		 return '/'
 
 
 ###############################################################################
@@ -106,47 +119,52 @@ def clearScreen():
 ###############################################################################
 def setup():
 	'''Gets config information for normal MultiCraft run'''
+	global defaultDirectory, saveDirectory
 	with open('cfg') as config:
 		for line in config:
 			temp = line.split()
 
 			if (temp[0] == "default"):
-				defaultDirectory = os.path.normpath(temp[1])
+				defaultDirectory = temp[1]
 			elif (temp[0] == "save"):
-				saveDirectory = os.path.normpath(temp[1])
+				saveDirectory = temp[1]
 			else:
 				 print "Error processing config file"
 				 sys.exit(1)
 
 
 ###############################################################################
-def run():
+def run(directory):
 	pass
 
 
 ###############################################################################
 def play():
 	'''Lets the user select which version of MineCraft they want to run'''
-	clearScreen()
 	# Get a list of all minecraft versions in the version save location
-	dirs = [item for item in os.listdir(saveDirectory) if os.path.isdir(item)]
+	dirs = [item for item in os.listdir(os.path.normpath(saveDirectory)) if os.path.isdir(os.path.normpath(saveDirectory) + getPathSlash() + item)]
+	
 	listPage = 0
 	while(1):
-		lastEle = (9 * listPage - 1) if ((9 * listPage) < len(dirs)) else (len(dirs) - 1)
+		clearScreen()
+
+		lastEle = (9 * (listPage + 1)) if (9 * (listPage + 1)) <= len(dirs) else len(dirs)
 		for count, dir in enumerate(dirs[listPage * 9:lastEle]):
-			print count + ") " + dir
+			print str(count + 1) + ") " + dir
+		
+		print ""
 		print "0) Prev"
 		print "-) Next"
 		print "=) Main Menu"
 
 		selection = raw_input("-->")
-#if (int(selection) >= 1 and int(selection) <= 9):
+
 		if (selection in ['1', '2', '3', '4', '5', '6', '7', '8', '9']):
-			run(saveDirectory + dirs[int(selection) - 1])
+			run(os.path.normpath(saveDirectory) + dirs[int(selection) - 1] + getPathSlash())
 		elif (selection == '0'):
 			listPage = 0 if (listPage == 0) else (listPage - 1)
 		elif (selection == '-'):
-			listPage = listPage if ((9 * listPage) >= len(dirs)) else (listPage + 1)
+			listPage = listPage if (((9 * listPage) + 1) >= len(dirs)) else (listPage + 1)
 		elif (selection == '='):
 			menu()
 		else:
