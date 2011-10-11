@@ -20,21 +20,36 @@ saveDirectory = ""
 def defaultInstallDir():
 	'''Helper used to return the OS specific install directory.'''
 	if (os.name == "nt"):
-		return "C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\"
+#return "C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\"
+		return "C:/Users/" + getpass.getuser() + "/AppData/Roaming/"
 	else:
 		print "Currently not supporting your OS...Sorry"
+
+
+###############################################################################
+def winToUnx(winPath):
+	temp = list(winPath)
+	replace = [count for count, char in enumerate(temp) if char == '\\']
+	for index in replace:
+		temp[index] = '/'
+	return ''.join(temp)
 
 
 ###############################################################################
 def writeCfg(default, save):
 	'''Helper used to write the config file.'''
 	if (os.name == "nt"):
-		# Checks that the user terminated their paths with \ 
-		if (default[len(default) - 1] != '\\'):
+		# Checks that the user terminated their paths 
+		# If I always terminate the paths with \ and convert to unix file names
+		#   I don't have to check for which OS I'm on
+		if (default[len(default) - 1] != '\\' and default[len(default) - 1] != '/'):
 			default += '\\'
 
-		if (save[len(save) - 1] != '\\'):
+		if (save[len(save) - 1] != '\\' and default[len(default) - 1] != '/'):
 			save += '\\'
+
+		default = winToUnx(default)
+		save = winToUnx(save)
 
 		config = open("cfg", "w")
 		config.write("default " + default + "\n")
@@ -96,19 +111,47 @@ def setup():
 			temp = line.split()
 
 			if (temp[0] == "default"):
-				defaultDirectory = temp[1]
+				defaultDirectory = os.path.normpath(temp[1])
 			elif (temp[0] == "save"):
-				saveDirectory = temp[1]
+				saveDirectory = os.path.normpath(temp[1])
 			else:
 				 print "Error processing config file"
 				 sys.exit(1)
 
 
 ###############################################################################
+def run():
+	pass
+
+
+###############################################################################
 def play():
 	'''Lets the user select which version of MineCraft they want to run'''
 	clearScreen()
-	for item in os.listdir(directorySettings[1][0])
+	# Get a list of all minecraft versions in the version save location
+	dirs = [item for item in os.listdir(saveDirectory) if os.path.isdir(item)]
+	listPage = 0
+	while(1):
+		lastEle = (9 * listPage - 1) if ((9 * listPage) < len(dirs)) else (len(dirs) - 1)
+		for count, dir in enumerate(dirs[listPage * 9:lastEle]):
+			print count + ") " + dir
+		print "0) Prev"
+		print "-) Next"
+		print "=) Main Menu"
+
+		selection = raw_input("-->")
+#if (int(selection) >= 1 and int(selection) <= 9):
+		if (selection in ['1', '2', '3', '4', '5', '6', '7', '8', '9']):
+			run(saveDirectory + dirs[int(selection) - 1])
+		elif (selection == '0'):
+			listPage = 0 if (listPage == 0) else (listPage - 1)
+		elif (selection == '-'):
+			listPage = listPage if ((9 * listPage) >= len(dirs)) else (listPage + 1)
+		elif (selection == '='):
+			menu()
+		else:
+			continue
+
 
 
 ###############################################################################
@@ -148,7 +191,7 @@ def menu():
 			add()
 		elif (selection == '3'):
 			remove()
-		elif (selectin == '4'):
+		elif (selection == '4'):
 			revertDefault()
 		elif (selection == '5'):
 			sys.exit(0)
