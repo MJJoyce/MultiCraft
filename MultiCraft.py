@@ -170,6 +170,55 @@ def play():
 			continue
 
 
+###############################################################################
+def playDefault():
+	'''Play the default Minecraft install.
+	   
+	   For Windows, this launches by looking for the Minecraft.exe in the
+	   same folder that MultiCraft is in. If it doesn't find it, then it
+	   checks for the minecraft.jar file in the default install directory.
+	   
+	   In Linux, this just runs the minecraft.jar file from the default directory.
+	   
+	   With regards to running this after cleaning out the default install:
+	   In Windows, if you have the Minecraft.exe in the same folder, Minecraft
+	   will still run and install a clean version. 
+	   
+	   If you use the jar file, then you will have to re-download it from 
+	   the minecraft website.
+	'''
+	print
+	defaultJar = os.path.normpath(defaultDirectory + ".minecraft/bin/minecraft.jar")
+	# will javaw be a problem in linux? Need to test
+	javaRun = "javaw -Xmx1024m -Xms512m -jar "
+
+	# Try to run the Minecraft.exe first if on Windows
+	if (os.name == "nt"):
+		exePath = os.getcwd() + "\\Minecraft.exe"
+		if (os.path.isfile(exePath)):
+			cmd = javaRun + exePath
+			print "Running Minecraft..."
+			subprocess.Popen(cmd)
+			exit(0)
+		
+	# For Windows, this is a backup in case the user didn't put Minecraft.exe in
+	#   with the MultiCraft launcher. This should only be used for Linux.
+	if (os.path.isfile(defaultJar)):
+		if (os.name == "nt"):
+			print "You need to put Minecraft.exe in the same folder as MultiCraft..."
+			print "Attempting to run Minecraft anyway..."
+
+		cmd = javaRun + defaultJar + " net.minecraft.LauncherFrame"
+		print "Running Minecraft"
+		subprocess.Popen(cmd)
+		exit(0)
+	else:
+		print "Can't run default install."
+		print "Either MultiCraft can't find both Minecraft.exe and minecraft.jar (Windows)"
+		print "Or it can't find your minecraft.jar (Linux)"
+		raw_input("Press any key to return to the main menu")
+		return
+
 
 ###############################################################################
 def add():
@@ -238,22 +287,25 @@ def menu():
 	while(1):
 		clearScreen()
 		print "---MultiCraft---"
-		print "1: Play"
-		print "2: Add Version"
-		print "3: Remove Version"
-		print "4: Reset Default Install"
-		print "5: Exit"
+		print "1: Play backup version"
+		print "2: Play default version"
+		print "3: Add Version"
+		print "4: Remove Version"
+		print "5: Reset Default Install"
+		print "6: Exit"
 		selection = raw_input("-->");
 
 		if (selection == '1'):
 			play()
 		elif (selection == '2'):
-			add()
+			playDefault()
 		elif (selection == '3'):
-			remove()
+			add()
 		elif (selection == '4'):
-			revertDefault()
+			remove()
 		elif (selection == '5'):
+			revertDefault()
+		elif (selection == '6'):
 			sys.exit(0)
 		else:
 			continue
