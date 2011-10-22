@@ -15,6 +15,7 @@ import getpass
 import shutil
 import errno
 import stat
+from time import sleep
 
 defaultDirectory = ""
 saveDirectory = ""
@@ -174,50 +175,28 @@ def play():
 def playDefault():
 	'''Play the default Minecraft install.
 	   
-	   For Windows, this launches by looking for the Minecraft.exe in the
-	   same folder that MultiCraft is in. If it doesn't find it, then it
-	   checks for the minecraft.jar file in the default install directory.
-	   
-	   In Linux, this just runs the minecraft.jar file from the default directory.
-	   
-	   With regards to running this after cleaning out the default install:
-	   In Windows, if you have the Minecraft.exe in the same folder, Minecraft
-	   will still run and install a clean version. 
-	   
-	   If you use the jar file, then you will have to re-download it from 
-	   the minecraft website.
+	   This simply launches either Minecraft.exe or minecraft.jar from the
+	   MultiCraft directory. Proper installation means that one of the two
+	   should be there. Report an error if they're not.
 	'''
-	print
-	defaultJar = os.path.normpath(defaultDirectory + ".minecraft/bin/minecraft.jar")
-	# will javaw be a problem in linux? Need to test
-	javaRun = "javaw -Xmx1024m -Xms512m -jar "
+	exeLocal = os.getcwd() + "\\Minecraft.exe"
+	jarLocal = os.getcwd() + getPathSlash() + "minecraft.jar"
 
-	# Try to run the Minecraft.exe first if on Windows
-	if (os.name == "nt"):
-		exePath = os.getcwd() + "\\Minecraft.exe"
-		if (os.path.isfile(exePath)):
-			cmd = javaRun + exePath
-			print "Running Minecraft..."
-			subprocess.Popen(cmd)
-			exit(0)
-		
-	# For Windows, this is a backup in case the user didn't put Minecraft.exe in
-	#   with the MultiCraft launcher. This should only be used for Linux.
-	if (os.path.isfile(defaultJar)):
-		if (os.name == "nt"):
-			print "You need to put Minecraft.exe in the same folder as MultiCraft..."
-			print "Attempting to run Minecraft anyway..."
-
-		cmd = javaRun + defaultJar + " net.minecraft.LauncherFrame"
-		print "Running Minecraft"
-		subprocess.Popen(cmd)
-		exit(0)
+	clearScreen()
+	print "---MultiCraft---\n"
+	if (os.path.isfile(exeLocal)):
+		subprocess.Popen("Minecraft.exe")
+	elif (os.path.isfile(jarLocal)):
+		subprocess.Popen("java -cp minecraft.jar net.minecraft.LauncherFrame")
 	else:
-		print "Can't run default install."
-		print "Either MultiCraft can't find both Minecraft.exe and minecraft.jar (Windows)"
-		print "Or it can't find your minecraft.jar (Linux)"
-		raw_input("Press any key to return to the main menu")
+		print "*** Multicraft cannot run Minecraft ***\n"
+		print "You need to put either Minecraft.exe or minecraft.jar in with MultiCraft"
+		print "Check the README for further instructions\n"
+		raw_input("Press any key to return to the menu...")
 		return
+
+	print "Running Minecraft..."
+	exit(1)
 
 
 ###############################################################################
