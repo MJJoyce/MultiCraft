@@ -32,11 +32,8 @@ def winToUnx(winPath):
 
 	   Makes dealing with paths easier in the code.
 	'''
-	temp = list(winPath)
-	replace = [count for count, char in enumerate(temp) if char == '\\']
-	for index in replace:
-		temp[index] = '/'
-	return ''.join(temp)
+	converted = ['/' if char == '\\' else char for char in list(winPath)]
+	return ''.join(converted)
 
 
 ###############################################################################
@@ -55,10 +52,10 @@ def writeCfg(default, save):
 		# Checks that the user terminated their paths 
 		# If I always terminate the paths with \ and convert to unix file names
 		#   I don't have to check for which OS I'm on
-		if (default[len(default) - 1] != '\\' and default[len(default) - 1] != '/'):
+		if (default[-1] != '\\' and default[-1] != '/'):
 			default += '\\'
 
-		if (save[len(save) - 1] != '\\' and default[len(default) - 1] != '/'):
+		if (save[-1] != '\\' and save[-1] != '/'):
 			save += '\\'
 
 		default = winToUnx(default)
