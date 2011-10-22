@@ -12,15 +12,17 @@ import os
 import sys
 import subprocess
 import getpass
+import shutil
+import errno
+import stat
 
 defaultDirectory = ""
 saveDirectory = ""
 
 ###############################################################################
-def defaultInstallDir():
+def defaultOSInstallDir():
 	'''Helper used to return the OS specific install directory.'''
 	if (os.name == "nt"):
-#return "C:\\Users\\" + getpass.getuser() + "\\AppData\\Roaming\\"
 		return "C:/Users/" + getpass.getuser() + "/AppData/Roaming/"
 	else:
 		print "Currently not supporting your OS...Sorry"
@@ -87,14 +89,14 @@ def initRun():
 	defDir = raw_input("-->")
 
 	if (defDir == ""):
-		defDir = defaultInstallDir()
+		defDir = defaultOSInstallDir()
 
 	print "\nEnter the directory where you would like to store different versions"
 	print "Leave blank for default (Same directory as OS default for Minecraft)"
 	saveDir = raw_input("-->")
 
 	if (saveDir == ""):
-		saveDir = defaultInstallDir()
+		saveDir = defaultOSInstallDir()
 
 	writeCfg(defDir, saveDir)
 
@@ -182,9 +184,52 @@ def remove():
 
 
 ###############################################################################
+def handleReadOnlyError(func, path, exception):
+	'''Used for handling read-only errors when using shutil.rmtree'''
+	exceptionVal = exception[1]
+	# If the error is caused by a file being read-only, give it full 
+	#   permissions (777) and try again
+	if (func in (os.rmdir, os.remove) and exceptionVal.errno == errno.EACCES):
+		os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+		func(path)
+	else:
+		raise
+
+
+###############################################################################
 def revertDefault():
-	''''''
-	pass
+	'''Restores the "default" Minecraft directory to the current version.
+	   
+	   Simply deletes the entire .minecraft folder, SAVES INCLUDED. When it 
+	   next run, a clean version of Minecraft will be installed over it.
+	'''
+	clearScreen()
+	print "This will remove everything in your default minecraft directory."
+	print "*** INCLUDING SAVES, TEXTURE PACKS, MODS, SETTINGS, ETC ***"
+	print "*** BACK YOUR STUFF UP IF YOU WANT TO SAVE ANYTHING!!!  ***\n"
+	print "Do you want to restore to default?"
+	sel = raw_input("[y/N] -->")
+
+	if (sel not in ['y', 'yes', 'Y', 'Yes']):
+		return
+
+	print "\nSeriously, are you absolutely sure?"
+	sel2 = raw_input("[y/N] -->")
+
+	if (sel2 not in ['y', 'yes', 'Y', 'Yes']):
+		return
+
+	dirPath = os.path.normpath(defaultDirectory + "/.minecraft")
+	if (os.path.isdir(dirPath)):
+		shutil.rmtree(dirPath, ignore_errors=False, onerror=handleReadOnlyError)
+		print "\nSuccessfully removed default install."
+		print "Run default install again to reinstall a clean version"
+		raw_input("Press any key to return to the main menu...")
+	else:
+		print "Could not remove default directory:"
+		print dirPath
+		raw_input("Press any key to return to menu...")
+	
 
 
 ###############################################################################
