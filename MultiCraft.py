@@ -201,8 +201,24 @@ def playDefault():
 
 ###############################################################################
 def add():
-	''''''
-	pass
+	'''Add new versions of Minecraft to manage.'''
+    sel = Null
+    while sel not in ['1', '2']:
+        clearScreen()
+        print "---MultiCraft Version Add---\n"
+        print "1) Copy default install over"
+        print "2) Add from a different location"
+        sel = raw_input("-->")
+
+    if (sel == '1'):
+        print "\nWhat would you like to call this version?"
+        name = raw_input("-->")
+
+        newSaveDir = saveDirectory + getPathSlash() + name + ".minecraft"
+        shutil.copytree(defaultDirectory + getPathSlash() + ".minecraft", newSaveDir) 
+    elif (sel == '2'):
+    else:
+
 
 
 ###############################################################################
