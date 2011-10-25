@@ -215,6 +215,8 @@ def writeRunScript(newVerDir):
         This writes the script for executing the new version. It also copies
         over minecraft.jar/.exe to the new directory.
     '''
+    newVerDir = os.path.normpath(newVerDir)
+
     # Check that the user setup MultiCraft correctly and copy launcher over to new directory
     if (not os.path.isfile("Minecraft.exe") and not os.path.isfile("minecraft.jar")):
         print "Could not locate Minecraft.exe/.jar..."
@@ -271,7 +273,7 @@ def add():
         shutil.copytree(defaultDirectory + getPathSlash() + ".minecraft", newSaveDir + ".minecraft") 
         successful = writeRunScript(newSaveDir)
 
-        print "Would you like to reset the default installation? [y/N]"
+        print "\nWould you like to reset the default installation? [y/N]"
         if (raw_input("-->") in ['y', 'yes', 'Y', 'Yes']):
             revertDefault()
 
@@ -284,10 +286,10 @@ def add():
 
         print "\nCopying Minecraft version..."
         newSaveDir = saveDirectory + getPathSlash() + name + getPathSlash()
-        shutil.copytree(oldDir, newSaveDir + ".minecraft")
+        shutil.copytree(oldDir + getPathSlash() + ".minecraft", newSaveDir + ".minecraft")
         successful = writeRunScript(newSaveDir)
 
-        print "Would you like to delete the old version? (All data will be lost) [y/N]"
+        print "\nWould you like to delete the old version? (All data will be lost) [y/N]"
         if (raw_input("-->") in ['y', 'yes', 'Y', 'Yes']):
             shutil.rmtree(oldDir, ignore_errors=False, onerror=handleReadOnlyError)
 
@@ -303,7 +305,7 @@ def add():
         print "New version install is invalid. Deleting..."
         shutil.rmtree(newSaveDir + ".minecraft", ignore_errors=False, onerror=handleReadOnlyError)
     else:
-        print "New version installed successfully"
+        print "\nNew version installed successfully"
 
     raw_input("Press any key to return to the Main Menu")
 
