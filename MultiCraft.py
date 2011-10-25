@@ -107,6 +107,7 @@ def initRun():
 
     writeCfg(defDir, saveDir)
 
+    print "*** Please be sure to copy Minecraft.exe or minecraft.jar (Check README) ***"
     print "\nThank you for configuring MuliCraft. Please exit and restart."
     print "Press any button to exit..."
     raw_input()
@@ -208,6 +209,48 @@ def playDefault():
 
 
 ###############################################################################
+def writeRunScript(newVerDir):
+    '''Helper for setting up a new Minecraft version save
+    
+        This writes the script for executing the new version. It also copies
+        over minecraft.jar/.exe to the new directory.
+    '''
+    # Check that the user setup MultiCraft correctly and copy launcher over to new directory
+    if (not os.path.isfile("Minecraft.exe") and not os.path.isfile("minecraft.jar")):
+        print "Could not locate Minecraft.exe/.jar..."
+        print "Check the README for proper installation."
+        return False
+    elif (os.path.isfile("Minecraft.exe")):
+        shutil.copy("Minecraft.exe", newVerDir)
+        useExe = True
+    elif (os.path.isfile("minecraft.jar")):
+        shutil.copy("minecraft.jar", newVerDir)
+        useExe = False
+    else:
+        print "Never should have gotten here..."
+        sys.exit(1)
+
+    # Write startup script
+    if (os.name == "nt"):
+        script = open(newVerDir + "\\MultiCraftRun.bat", 'w')
+        script.write("set appdata=" + newVerDir + "\n")
+        if (useExe):
+            script.write("Minecraft.exe")
+        else:
+            script.write("java -cp minecraft.jar net.minecraft.LauncherFrame")
+        script.close()
+    else:
+        script = open(newVerDir + "/MultiCraftRun.sh", 'w')
+        script.write("#!/bin/sh\n")
+        script.write("HOME=" + newVerDir + "\n")
+        script.write("java -cp minecraft.jar net.minecraft.LauncherFrame")
+        script.close()
+        os.chmod(newVerDir + "/MultiCraftRun.sh", stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+
+    return True
+
+
+###############################################################################
 def add():
     '''Add new versions of Minecraft to manage.'''
     sel = None
@@ -226,7 +269,7 @@ def add():
         print "\nCopying Minecraft version..."
         newSaveDir = saveDirectory + getPathSlash() + name + getPathSlash()
         shutil.copytree(defaultDirectory + getPathSlash() + ".minecraft", newSaveDir + ".minecraft") 
-        writeRunScript(newSaveDir)
+        successful = writeRunScript(newSaveDir)
 
         print "Would you like to reset the default installation? [y/N]"
         if (raw_input("-->") in ['y', 'yes', 'Y', 'Yes']):
@@ -242,7 +285,7 @@ def add():
         print "\nCopying Minecraft version..."
         newSaveDir = saveDirectory + getPathSlash() + name + getPathSlash()
         shutil.copytree(oldDir, newSaveDir + ".minecraft")
-        writeRunScript(newSaveDir)
+        successful = writeRunScript(newSaveDir)
 
         print "Would you like to delete the old version? (All data will be lost) [y/N]"
         if (raw_input("-->") in ['y', 'yes', 'Y', 'Yes']):
@@ -250,11 +293,19 @@ def add():
 
     elif (sel == '3'):
         # Just need to return to the Main Menu...do nothing
-        pass
+        return
     else:
         print "Never should have gotten here in add function"
         sys.exit(1)
 
+    if (not successful):
+        print "\nCould not write execution script..."
+        print "New version install is invalid. Deleting..."
+        shutil.rmtree(newSaveDir + ".minecraft", ignore_errors=False, onerror=handleReadOnlyError)
+    else:
+        print "New version installed successfully"
+
+    raw_input("Press any key to return to the Main Menu")
 
 
 ###############################################################################
