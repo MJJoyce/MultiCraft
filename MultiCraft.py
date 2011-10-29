@@ -144,7 +144,20 @@ def setup():
 
 ###############################################################################
 def run(directory):
-    pass
+    '''Helper for running the version of Minecraft in the passed directory'''
+    directory = os.path.normpath(directory) + os.getPathSlash()
+    if (os.path.isfile(directory + "Minecraft.exe")):
+        subprocess.Popen(directory + "Minecraft.exe")
+    elif (os.path.isfile(directory + "minecraft.jar")):
+        if (os.name == "nt"):
+            java = "javaw "
+        else:
+            java = "java"
+
+        subprocess.Popen(java + "-cp minecraft.jar net.minecraft.LauncherFrame")
+    else:
+        print "The selected Minecraft installation appears to be invalid."
+        print "Consider removing it and adding it a again time."
 
 
 ###############################################################################
