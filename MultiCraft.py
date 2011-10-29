@@ -144,7 +144,7 @@ def setup():
 
 ###############################################################################
 def run(directory):
-    '''Helper for running the version of Minecraft in the passed directory'''
+    '''Helper for running the version of Minecraft in the passed directory.'''
     directory = os.path.normpath(directory) + os.getPathSlash()
     if (os.path.isfile(directory + "Minecraft.exe")):
         subprocess.Popen(directory + "Minecraft.exe")
