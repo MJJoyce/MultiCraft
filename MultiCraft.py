@@ -165,6 +165,11 @@ def play():
     '''Lets the user select which version of MineCraft they want to run'''
     # Get a list of all minecraft versions in the version save location
     dirs = [item for item in os.listdir(os.path.normpath(saveDirectory)) if os.path.isdir(os.path.normpath(saveDirectory) + getPathSlash() + item)]
+
+    if (len(dirs) == 0):
+	print "You don't have any backup versions available to play.\n"
+	raw_input("Press any key to return to the main menu...")
+	return
     
     listPage = 0
     while(1):
@@ -184,6 +189,9 @@ def play():
         ###################
         # IS THERE A BUG HERE WITH THE DIRECTORY SELECTION OR AM I MISSING SOMETHING?
         if (selection in ['1', '2', '3', '4', '5', '6', '7', '8', '9']):
+	    if ((lastEle - listPage * 9)  < int(selection)):
+	        continue
+
             run(os.path.normpath(saveDirectory) + dirs[int(selection) - 1] + getPathSlash())
         elif (selection == '0'):
             listPage = 0 if (listPage == 0) else (listPage - 1)
@@ -352,11 +360,11 @@ def remove():
         selection = raw_input("-->")
 
         if (selection in ['1', '2', '3', '4', '5', '6', '7', '8', '9']):
-	    if len(dirs) < int(selection):
+	    if ((lastEle - listPage * 9) < int(selection)):
                 continue
 
 	    print "\n*** All saved data will be lost. ***"
-	    userIn = raw_input("Are you sure you want to remove this version? [y/N]")
+	    userIn = raw_input("Are you sure you want to remove this version? [y/N]: ")
 	    if (userIn not in ['y', 'Y', 'yes', 'Yes']):
                 continue
 
