@@ -349,6 +349,12 @@ def remove():
 	    return
 
         lastEle = (9 * (listPage + 1)) if (9 * (listPage + 1)) <= len(dirs) else len(dirs)
+
+	# This is used to make sure that removing a backup doesn't result in the option
+	#   page being empty
+	if (listPage * 9 >= len(dirs)):
+	    listPage -= 1
+
         for count, dir in enumerate(dirs[listPage * 9:lastEle]):
             print str(count + 1) + ") " + dir
         
