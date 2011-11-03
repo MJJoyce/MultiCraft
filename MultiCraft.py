@@ -466,9 +466,10 @@ def menu():
 ###############################################################################
 # Main
 ###############################################################################
-cfg = "cfg" if os.name == "nt" else ".cfg"
-if (not os.path.isfile(cfg)):
-    initRun()
-else:
-    setup()
-    menu()
+if (__name__ == "__main__"):
+    cfg = "cfg" if os.name == "nt" else ".cfg"
+    if (not os.path.isfile(cfg)):
+	initRun()
+    else:
+	setup()
+	menu()
