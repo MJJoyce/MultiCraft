@@ -145,19 +145,16 @@ def setup():
 ###############################################################################
 def run(directory):
     '''Helper for running the version of Minecraft in the passed directory.'''
-    directory = os.path.normpath(directory) + os.getPathSlash()
-    if (os.path.isfile(directory + "Minecraft.exe")):
-        subprocess.Popen(directory + "Minecraft.exe")
-    elif (os.path.isfile(directory + "minecraft.jar")):
-        if (os.name == "nt"):
-            java = "javaw "
-        else:
-            java = "java"
-
-        subprocess.Popen(java + "-cp minecraft.jar net.minecraft.LauncherFrame")
+    directory = os.path.normpath(directory) + getPathSlash()
+    if (os.path.isfile(directory + "MultiCraftRun.bat")):
+        subprocess.Popen(directory + "MultiCraftRun.bat")
+    elif (os.path.isfile(directory + "MultiCraftRun.sh")):
+        subprocess.Popen(directory + "MultiCraftrun.sh")
     else:
         print "The selected Minecraft installation appears to be invalid."
-        print "Consider removing it and adding it a again time."
+        print "Consider removing it and adding it again."
+	raw_input("...")
+	return
 
 
 ###############################################################################
@@ -192,7 +189,7 @@ def play():
 	    if ((lastEle - listPage * 9)  < int(selection)):
 	        continue
 
-            run(os.path.normpath(saveDirectory) + dirs[int(selection) - 1] + getPathSlash())
+            run(os.path.normpath(saveDirectory + dirs[int(selection) - 1] + getPathSlash()))
         elif (selection == '0'):
             listPage = 0 if (listPage == 0) else (listPage - 1)
         elif (selection == '-'):
