@@ -347,7 +347,7 @@ def remove():
         selection = raw_input("-->")
 
         if (selection in ['1', '2', '3', '4', '5', '6', '7', '8', '9']):
-            dirPath = ospath.normpath(saveDirectory) + dirs[listPage * 9 + int(selection) - 1] 
+            dirPath = os.path.normpath(saveDirectory + dirs[listPage * 9 + int(selection) - 1])
             shutil.rmtree(dirPath, ignore_errors=False, onerror=handleReadOnlyError)
             dirs = [item for item in os.listdir(os.path.normpath(saveDirectory)) if os.path.isdir(os.path.normpath(saveDirectory) + getPathSlash() + item)]
         elif (selection == '0'):
