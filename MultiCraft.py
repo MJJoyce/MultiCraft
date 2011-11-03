@@ -97,17 +97,17 @@ def initRun():
         defDir = defaultOSInstallDir()
 
     print "\nEnter the directory where you would like to store different versions"
-    print "Leave blank for default (Same directory as OS default for Minecraft)"
+    print "Leave blank for default (Same directory as MultiCraft)"
     saveDir = raw_input("-->")
 
     if (saveDir == ""):
-        saveDir = defaultOSInstallDir()
+	saveDir = os.getcwd()
 
-    saveDir += getPathSlash() + "MultiCraftSaves" + getPathSlash()
+    saveDir += getPathSlash() + "MultiCraft_Versions" + getPathSlash()
 
     writeCfg(defDir, saveDir)
 
-    print "*** Please be sure to copy Minecraft.exe or minecraft.jar (Check README) ***"
+    print "\n*** Please be sure to copy Minecraft.exe or minecraft.jar (Check README) ***"
     print "\nThank you for configuring MuliCraft. Please exit and restart."
     print "Press any button to exit..."
     raw_input()
