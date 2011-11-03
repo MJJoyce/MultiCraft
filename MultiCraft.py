@@ -330,10 +330,15 @@ def remove():
     '''Remove a saved version of Minecraft'''
     # I don't like doing this with the comprehension, but it works for now.
     dirs = [item for item in os.listdir(os.path.normpath(saveDirectory)) if os.path.isdir(os.path.normpath(saveDirectory) + getPathSlash() + item)]
-    
+
     listPage = 0
     while(1):
         clearScreen()
+
+        if (len(dirs) == 0):
+            print "You don't have any backup versions available to delete.\n"
+	    raw_input("Press any key to return to the main menu...")
+	    return
 
         lastEle = (9 * (listPage + 1)) if (9 * (listPage + 1)) <= len(dirs) else len(dirs)
         for count, dir in enumerate(dirs[listPage * 9:lastEle]):
@@ -347,6 +352,14 @@ def remove():
         selection = raw_input("-->")
 
         if (selection in ['1', '2', '3', '4', '5', '6', '7', '8', '9']):
+	    if len(dirs) < int(selection):
+                continue
+
+	    print "\n*** All saved data will be lost. ***"
+	    userIn = raw_input("Are you sure you want to remove this version? [y/N]")
+	    if (userIn not in ['y', 'Y', 'yes', 'Yes']):
+                continue
+
             dirPath = os.path.normpath(saveDirectory + dirs[listPage * 9 + int(selection) - 1])
             shutil.rmtree(dirPath, ignore_errors=False, onerror=handleReadOnlyError)
             dirs = [item for item in os.listdir(os.path.normpath(saveDirectory)) if os.path.isdir(os.path.normpath(saveDirectory) + getPathSlash() + item)]
