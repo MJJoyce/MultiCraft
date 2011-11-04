@@ -156,6 +156,11 @@ def run(directory):
 	raw_input("...")
 	return
 
+    clearScreen()
+    print("Running selected Miencraft version...")
+    raw_input("Press ENTER to exit...")
+    sys.exit(1)
+
 
 ###############################################################################
 def play():
@@ -216,7 +221,7 @@ def playDefault():
     if (os.path.isfile(exeLocal)):
         subprocess.Popen("Minecraft.exe")
     elif (os.path.isfile(jarLocal)):
-        subprocess.Popen("java -cp minecraft.jar net.minecraft.LauncherFrame")
+        subprocess.Popen("javaw -cp minecraft.jar net.minecraft.LauncherFrame")
     else:
         print "*** Multicraft cannot run Minecraft ***\n"
         print "You need to put either Minecraft.exe or minecraft.jar in with MultiCraft"
@@ -225,6 +230,7 @@ def playDefault():
         return
 
     print "Running Minecraft..."
+    raw_input("Press ENTER to exit...")
     sys.exit(1)
 
 
@@ -259,7 +265,7 @@ def writeRunScript(newVerDir):
         if (useExe):
             script.write("Minecraft.exe")
         else:
-            script.write("java -cp minecraft.jar net.minecraft.LauncherFrame")
+            script.write("javaw -cp minecraft.jar net.minecraft.LauncherFrame")
         script.close()
     else:
         script = open(newVerDir + "/MultiCraftRun.sh", 'w')
