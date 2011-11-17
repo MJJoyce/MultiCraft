@@ -221,7 +221,11 @@ def playDefault():
     if (os.path.isfile(exeLocal)):
         subprocess.Popen("Minecraft.exe")
     elif (os.path.isfile(jarLocal)):
-        subprocess.Popen("javaw -cp minecraft.jar net.minecraft.LauncherFrame")
+        if (os.name == "nt"):
+            subprocess.Popen("javaw -cp minecraft.jar net.minecraft.LauncherFrame")
+        else:
+            sArgs = ["java",  "-cp", "minecraft.jar", "net.minecraft.LauncherFrame"]
+            subprocess.Popen(sArgs)
     else:
         print "*** Multicraft cannot run Minecraft ***\n"
         print "You need to put either Minecraft.exe or minecraft.jar in with MultiCraft"
