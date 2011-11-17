@@ -149,7 +149,7 @@ def run(directory):
     if (os.path.isfile(directory + "MultiCraftRun.bat")):
         subprocess.Popen(directory + "MultiCraftRun.bat")
     elif (os.path.isfile(directory + "MultiCraftRun.sh")):
-        subprocess.Popen(directory + "MultiCraftrun.sh")
+        subprocess.Popen(directory + "MultiCraftRun.sh")
     else:
         print "The selected Minecraft installation appears to be invalid."
         print "Consider removing it and adding it again."
@@ -270,8 +270,7 @@ def writeRunScript(newVerDir):
     else:
         script = open(newVerDir + "/MultiCraftRun.sh", 'w')
         script.write("#!/bin/sh\n")
-        script.write("HOME=" + newVerDir + "\n")
-        script.write("java -cp minecraft.jar net.minecraft.LauncherFrame")
+        script.write("java -Duser.home=" + newVerDir.replace(" ", "\\ ") + " -cp minecraft.jar net.minecraft.LauncherFrame")
         script.close()
         os.chmod(newVerDir + "/MultiCraftRun.sh", stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
 
